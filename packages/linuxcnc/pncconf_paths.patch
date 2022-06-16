@@ -1,0 +1,13 @@
+diff --git a/src/emc/usr_intf/pncconf/private_data.py b/src/emc/usr_intf/pncconf/private_data.py
+index 7bb8127ea4..88e99934ca 100644
+--- a/src/emc/usr_intf/pncconf/private_data.py
++++ b/src/emc/usr_intf/pncconf/private_data.py
+@@ -74,7 +74,7 @@ class Private_Data:
+         self._METRIC = 1
+ 
+         self.DATADIR = linuxcnc.SHARE + "/linuxcnc/pncconf"
+-        self.WIZARD = os.path.join(self.DATADIR, "linuxcnc-wizard.gif")
++        self.WIZARD = linuxcnc.SHARE + "/linuxcnc/linuxcnc-wizard.gif"
+         if not os.path.isfile(self.WIZARD):
+             self.WIZARD = os.path.join("/etc/linuxcnc/linuxcnc-wizard.gif")
+         if not os.path.isfile(self.WIZARD):

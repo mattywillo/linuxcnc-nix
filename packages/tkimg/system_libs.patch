@@ -1,0 +1,609 @@
+diff --git a/libjpeg/Makefile.in b/libjpeg/Makefile.in
+index 021f2b5..9780c04 100755
+--- a/libjpeg/Makefile.in
++++ b/libjpeg/Makefile.in
+@@ -149,9 +149,9 @@ DEFS		= @DEFS@ $(PKG_CFLAGS)
+ CONFIG_CLEAN_FILES = Makefile
+ 
+ CPPFLAGS	= @CPPFLAGS@
+-LIBS		= @PKG_LIBS@ @LIBS@
++LIBS		= @PKG_LIBS@ @LIBS@ -ljpeg
+ AR		= @AR@
+-CFLAGS		= @CFLAGS@ -DJPEGTCLAPI=MODULE_SCOPE -I$(srcdir)/../base
++CFLAGS		= @CFLAGS@ -DJPEGTCLAPI=MODULE_SCOPE -I$(srcdir)/../base -DMODULE_SCOPE=extern
+ COMPILE		= $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+ 
+ #========================================================================
+diff --git a/libjpeg/configure b/libjpeg/configure
+index 22f9cdc..4772eed 100755
+--- a/libjpeg/configure
++++ b/libjpeg/configure
+@@ -5158,60 +5158,6 @@ JPEG_CC=$CC
+ 
+ 
+ 
+-
+-    vars="
+-	../compat/libjpeg/jcapimin.c	../compat/libjpeg/jcapistd.c	../compat/libjpeg/jccoefct.c
+-	../compat/libjpeg/jccolor.c	../compat/libjpeg/jcdctmgr.c	../compat/libjpeg/jchuff.c
+-	../compat/libjpeg/jcinit.c	../compat/libjpeg/jcmainct.c	../compat/libjpeg/jcmarker.c
+-	../compat/libjpeg/jcmaster.c	../compat/libjpeg/jcomapi.c	../compat/libjpeg/jcparam.c
+-	../compat/libjpeg/jcarith.c	../compat/libjpeg/jcprepct.c	../compat/libjpeg/jcsample.c
+-	../compat/libjpeg/jctrans.c	../compat/libjpeg/jdapimin.c	../compat/libjpeg/jdapistd.c
+-	../compat/libjpeg/jdatadst.c	../compat/libjpeg/jdatasrc.c	../compat/libjpeg/jdcoefct.c
+-	../compat/libjpeg/jdcolor.c	../compat/libjpeg/jddctmgr.c	../compat/libjpeg/jdhuff.c
+-	../compat/libjpeg/jdinput.c	../compat/libjpeg/jdmainct.c	../compat/libjpeg/jdmarker.c
+-	../compat/libjpeg/jdmaster.c	../compat/libjpeg/jdmerge.c	../compat/libjpeg/jdarith.c
+-	../compat/libjpeg/jdpostct.c	../compat/libjpeg/jdsample.c	../compat/libjpeg/jdtrans.c
+-	../compat/libjpeg/jerror.c	../compat/libjpeg/jfdctflt.c	../compat/libjpeg/jfdctfst.c
+-	../compat/libjpeg/jfdctint.c	../compat/libjpeg/jidctflt.c	../compat/libjpeg/jidctfst.c
+-	../compat/libjpeg/jidctint.c	../compat/libjpeg/jaricom.c	../compat/libjpeg/jquant1.c
+-	../compat/libjpeg/jquant2.c	../compat/libjpeg/jutils.c	../compat/libjpeg/jmemmgr.c
+-	../compat/libjpeg/jmemansi.c
+-"
+-    for i in $vars; do
+-	case $i in
+-	    \$*)
+-		# allow $-var names
+-		PKG_SOURCES="$PKG_SOURCES $i"
+-		PKG_OBJECTS="$PKG_OBJECTS $i"
+-		;;
+-	    *)
+-		# check for existence - allows for generic/win/unix VPATH
+-		# To add more dirs here (like 'src'), you have to update VPATH
+-		# in Makefile.in as well
+-		if test ! -f "${srcdir}/$i" -a ! -f "${srcdir}/generic/$i" \
+-		    -a ! -f "${srcdir}/win/$i" -a ! -f "${srcdir}/unix/$i" \
+-		    -a ! -f "${srcdir}/macosx/$i" \
+-		    ; then
+-		    as_fn_error $? "could not find source file '$i'" "$LINENO" 5
+-		fi
+-		PKG_SOURCES="$PKG_SOURCES $i"
+-		# this assumes it is in a VPATH dir
+-		i=`basename $i`
+-		# handle user calling this before or after TEA_SETUP_COMPILER
+-		if test x"${OBJEXT}" != x ; then
+-		    j="`echo $i | sed -e 's/\.[^.]*$//'`.${OBJEXT}"
+-		else
+-		    j="`echo $i | sed -e 's/\.[^.]*$//'`.\${OBJEXT}"
+-		fi
+-		PKG_OBJECTS="$PKG_OBJECTS $j"
+-		;;
+-	esac
+-    done
+-
+-
+-
+-
+-
+     vars="jpegtcl.h jpegtclDecls.h"
+     for i in $vars; do
+ 	# check for existence, be strict because it is installed
+diff --git a/libjpeg/configure.ac b/libjpeg/configure.ac
+index 040b56f..604173a 100755
+--- a/libjpeg/configure.ac
++++ b/libjpeg/configure.ac
+@@ -53,24 +53,6 @@ JPEG_CC=$CC
+ 
+ TEA_ADD_SOURCES([jpegtcl.c jpegtclStubInit.c])
+ 
+-TEA_ADD_SOURCES([
+-	../compat/libjpeg/jcapimin.c	../compat/libjpeg/jcapistd.c	../compat/libjpeg/jccoefct.c
+-	../compat/libjpeg/jccolor.c	../compat/libjpeg/jcdctmgr.c	../compat/libjpeg/jchuff.c
+-	../compat/libjpeg/jcinit.c	../compat/libjpeg/jcmainct.c	../compat/libjpeg/jcmarker.c
+-	../compat/libjpeg/jcmaster.c	../compat/libjpeg/jcomapi.c	../compat/libjpeg/jcparam.c
+-	../compat/libjpeg/jcarith.c	../compat/libjpeg/jcprepct.c	../compat/libjpeg/jcsample.c
+-	../compat/libjpeg/jctrans.c	../compat/libjpeg/jdapimin.c	../compat/libjpeg/jdapistd.c
+-	../compat/libjpeg/jdatadst.c	../compat/libjpeg/jdatasrc.c	../compat/libjpeg/jdcoefct.c
+-	../compat/libjpeg/jdcolor.c	../compat/libjpeg/jddctmgr.c	../compat/libjpeg/jdhuff.c
+-	../compat/libjpeg/jdinput.c	../compat/libjpeg/jdmainct.c	../compat/libjpeg/jdmarker.c
+-	../compat/libjpeg/jdmaster.c	../compat/libjpeg/jdmerge.c	../compat/libjpeg/jdarith.c
+-	../compat/libjpeg/jdpostct.c	../compat/libjpeg/jdsample.c	../compat/libjpeg/jdtrans.c
+-	../compat/libjpeg/jerror.c	../compat/libjpeg/jfdctflt.c	../compat/libjpeg/jfdctfst.c
+-	../compat/libjpeg/jfdctint.c	../compat/libjpeg/jidctflt.c	../compat/libjpeg/jidctfst.c
+-	../compat/libjpeg/jidctint.c	../compat/libjpeg/jaricom.c	../compat/libjpeg/jquant1.c
+-	../compat/libjpeg/jquant2.c	../compat/libjpeg/jutils.c	../compat/libjpeg/jmemmgr.c
+-	../compat/libjpeg/jmemansi.c
+-])
+ 
+ TEA_ADD_HEADERS([jpegtcl.h jpegtclDecls.h])
+ 
+diff --git a/libjpeg/jpegtclDecls.h b/libjpeg/jpegtclDecls.h
+index bd8decb..3367252 100755
+--- a/libjpeg/jpegtclDecls.h
++++ b/libjpeg/jpegtclDecls.h
+@@ -30,8 +30,8 @@ EXTERN int Jpegtcl_SafeInit(Tcl_Interp *interp);
+ 
+ /* undef Tcl macros that conflict with libjpeg stuff (sigh) */
+ #undef EXTERN
+-#include "../compat/libjpeg/jpeglib.h"
+-#include "../compat/libjpeg/jerror.h"
++#include "/usr/include/jpeglib.h"
++#include "/usr/include/jerror.h"
+ 
+ /* !BEGIN!: Do not edit below this line. */
+ 
+diff --git a/libpng/Makefile.in b/libpng/Makefile.in
+index bdfb68f..6e84f5f 100755
+--- a/libpng/Makefile.in
++++ b/libpng/Makefile.in
+@@ -153,9 +153,9 @@ DEFS		= @DEFS@ $(PKG_CFLAGS)
+ CONFIG_CLEAN_FILES = Makefile
+ 
+ CPPFLAGS	= @CPPFLAGS@
+-LIBS		= @PKG_LIBS@ @LIBS@
++LIBS		= @PKG_LIBS@ @LIBS@ -lpng16
+ AR		= @AR@
+-CFLAGS		= @CFLAGS@ -DPNG_IMPEXP=MODULE_SCOPE -DPNG_EXTERN=MODULE_SCOPE
++CFLAGS		= @CFLAGS@ -DPNG_IMPEXP= -DPNG_EXTERN=MODULE_SCOPE -DMODULE_SCOPE=extern
+ COMPILE		= $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+ 
+ #========================================================================
+diff --git a/libpng/configure b/libpng/configure
+index 75cdff5..e35485e 100755
+--- a/libpng/configure
++++ b/libpng/configure
+@@ -5449,49 +5449,6 @@ fi
+ 
+ 
+ 
+-
+-    vars="
+-	../compat/libpng/png.c	../compat/libpng/pngerror.c	../compat/libpng/pngmem.c
+-	../compat/libpng/pngpread.c	../compat/libpng/pngread.c	../compat/libpng/pngrio.c
+-	../compat/libpng/pngrtran.c	../compat/libpng/pngrutil.c	../compat/libpng/pngset.c
+-	../compat/libpng/pngtrans.c	../compat/libpng/pngwio.c	../compat/libpng/pngwrite.c
+-	../compat/libpng/pngwtran.c	../compat/libpng/pngwutil.c	../compat/libpng/pngget.c
+-"
+-    for i in $vars; do
+-	case $i in
+-	    \$*)
+-		# allow $-var names
+-		PKG_SOURCES="$PKG_SOURCES $i"
+-		PKG_OBJECTS="$PKG_OBJECTS $i"
+-		;;
+-	    *)
+-		# check for existence - allows for generic/win/unix VPATH
+-		# To add more dirs here (like 'src'), you have to update VPATH
+-		# in Makefile.in as well
+-		if test ! -f "${srcdir}/$i" -a ! -f "${srcdir}/generic/$i" \
+-		    -a ! -f "${srcdir}/win/$i" -a ! -f "${srcdir}/unix/$i" \
+-		    -a ! -f "${srcdir}/macosx/$i" \
+-		    ; then
+-		    as_fn_error $? "could not find source file '$i'" "$LINENO" 5
+-		fi
+-		PKG_SOURCES="$PKG_SOURCES $i"
+-		# this assumes it is in a VPATH dir
+-		i=`basename $i`
+-		# handle user calling this before or after TEA_SETUP_COMPILER
+-		if test x"${OBJEXT}" != x ; then
+-		    j="`echo $i | sed -e 's/\.[^.]*$//'`.${OBJEXT}"
+-		else
+-		    j="`echo $i | sed -e 's/\.[^.]*$//'`.\${OBJEXT}"
+-		fi
+-		PKG_OBJECTS="$PKG_OBJECTS $j"
+-		;;
+-	esac
+-    done
+-
+-
+-
+-
+-
+     vars="pngtcl.h pngtclDecls.h"
+     for i in $vars; do
+ 	# check for existence, be strict because it is installed
+diff --git a/libpng/configure.ac b/libpng/configure.ac
+index e9a814f..17f38a3 100755
+--- a/libpng/configure.ac
++++ b/libpng/configure.ac
+@@ -64,14 +64,6 @@ IMG_SRCPATH(zlibtcl)
+ 
+ TEA_ADD_SOURCES([pngtcl.c pngtclStubInit.c])
+ 
+-TEA_ADD_SOURCES([
+-	../compat/libpng/png.c	../compat/libpng/pngerror.c	../compat/libpng/pngmem.c
+-	../compat/libpng/pngpread.c	../compat/libpng/pngread.c	../compat/libpng/pngrio.c
+-	../compat/libpng/pngrtran.c	../compat/libpng/pngrutil.c	../compat/libpng/pngset.c
+-	../compat/libpng/pngtrans.c	../compat/libpng/pngwio.c	../compat/libpng/pngwrite.c
+-	../compat/libpng/pngwtran.c	../compat/libpng/pngwutil.c	../compat/libpng/pngget.c
+-])
+-
+ TEA_ADD_HEADERS([pngtcl.h pngtclDecls.h])
+ TEA_ADD_INCLUDES([-I\"`\${CYGPATH} \${zlibtcl_SRC_PATH}`\"])
+ TEA_ADD_INCLUDES([-I\"`\${CYGPATH} \${zlibtcl_BUILD_PATH}`\"])
+diff --git a/libpng/pngtclDecls.h b/libpng/pngtclDecls.h
+index 82eb8a4..d394525 100755
+--- a/libpng/pngtclDecls.h
++++ b/libpng/pngtclDecls.h
+@@ -28,7 +28,9 @@
+ EXTERN int Pngtcl_Init(Tcl_Interp *interp);
+ EXTERN int Pngtcl_SafeInit(Tcl_Interp *interp);
+ 
+-#include "../compat/libpng/png.h"
++#undef PNG_IMPEXP
++#include "/usr/include/png.h"
++#define PNG_IMPEXP extern
+ 
+ /* !BEGIN!: Do not edit below this line. */
+ 
+diff --git a/libtiff/Makefile.in b/libtiff/Makefile.in
+index f6f2664..a0c7006 100755
+--- a/libtiff/Makefile.in
++++ b/libtiff/Makefile.in
+@@ -151,9 +151,9 @@ DEFS		= @DEFS@ $(PKG_CFLAGS)
+ CONFIG_CLEAN_FILES = Makefile
+ 
+ CPPFLAGS	= @CPPFLAGS@
+-LIBS		= @PKG_LIBS@ @LIBS@
++LIBS		= @PKG_LIBS@ @LIBS@ -ltiff
+ AR		= @AR@
+-CFLAGS		= @CFLAGS@ -DTIFFTCLAPI=MODULE_SCOPE
++CFLAGS		= @CFLAGS@ -DTIFFTCLAPI=MODULE_SCOPE -DMODULE_SCOPE=extern
+ COMPILE		= $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+ 
+ #========================================================================
+diff --git a/libtiff/configure b/libtiff/configure
+index 03551e3..6e16b5b 100755
+--- a/libtiff/configure
++++ b/libtiff/configure
+@@ -5298,55 +5298,6 @@ mv -f tifftcl_confdefs.h confdefs.h
+ 
+ 
+ 
+-
+-    vars="
+-	../compat/libtiff/libtiff/tif_aux.c		../compat/libtiff/libtiff/tif_close.c		../compat/libtiff/libtiff/tif_codec.c
+-	../compat/libtiff/libtiff/tif_compress.c	../compat/libtiff/libtiff/tif_dir.c		../compat/libtiff/libtiff/tif_dirinfo.c
+-	../compat/libtiff/libtiff/tif_dirread.c	../compat/libtiff/libtiff/tif_dirwrite.c	../compat/libtiff/libtiff/tif_dumpmode.c
+-	../compat/libtiff/libtiff/tif_error.c		../compat/libtiff/libtiff/tif_fax3.c
+-	../compat/libtiff/libtiff/tif_getimage.c	../compat/libtiff/libtiff/tif_flush.c		../compat/libtiff/libtiff/tif_luv.c
+-	../compat/libtiff/libtiff/tif_lzw.c		../compat/libtiff/libtiff/tif_next.c		../compat/libtiff/libtiff/tif_open.c
+-	../compat/libtiff/libtiff/tif_packbits.c	../compat/libtiff/libtiff/tif_predict.c	../compat/libtiff/libtiff/tif_print.c
+-	../compat/libtiff/libtiff/tif_read.c		../compat/libtiff/libtiff/tif_swab.c		../compat/libtiff/libtiff/tif_strip.c
+-	../compat/libtiff/libtiff/tif_thunder.c	../compat/libtiff/libtiff/tif_tile.c		../compat/libtiff/libtiff/tif_version.c
+-	../compat/libtiff/libtiff/tif_warning.c	../compat/libtiff/libtiff/tif_write.c
+-	../compat/libtiff/libtiff/tif_color.c		../compat/libtiff/libtiff/tif_extension.c
+-"
+-    for i in $vars; do
+-	case $i in
+-	    \$*)
+-		# allow $-var names
+-		PKG_SOURCES="$PKG_SOURCES $i"
+-		PKG_OBJECTS="$PKG_OBJECTS $i"
+-		;;
+-	    *)
+-		# check for existence - allows for generic/win/unix VPATH
+-		# To add more dirs here (like 'src'), you have to update VPATH
+-		# in Makefile.in as well
+-		if test ! -f "${srcdir}/$i" -a ! -f "${srcdir}/generic/$i" \
+-		    -a ! -f "${srcdir}/win/$i" -a ! -f "${srcdir}/unix/$i" \
+-		    -a ! -f "${srcdir}/macosx/$i" \
+-		    ; then
+-		    as_fn_error $? "could not find source file '$i'" "$LINENO" 5
+-		fi
+-		PKG_SOURCES="$PKG_SOURCES $i"
+-		# this assumes it is in a VPATH dir
+-		i=`basename $i`
+-		# handle user calling this before or after TEA_SETUP_COMPILER
+-		if test x"${OBJEXT}" != x ; then
+-		    j="`echo $i | sed -e 's/\.[^.]*$//'`.${OBJEXT}"
+-		else
+-		    j="`echo $i | sed -e 's/\.[^.]*$//'`.\${OBJEXT}"
+-		fi
+-		PKG_OBJECTS="$PKG_OBJECTS $j"
+-		;;
+-	esac
+-    done
+-
+-
+-
+-
+-
+     vars="tifftcl.h tifftclDecls.h"
+     for i in $vars; do
+ 	# check for existence, be strict because it is installed
+diff --git a/libtiff/configure.ac b/libtiff/configure.ac
+index aedb2ac..fef474d 100755
+--- a/libtiff/configure.ac
++++ b/libtiff/configure.ac
+@@ -82,20 +82,6 @@ mv -f tifftcl_confdefs.h confdefs.h
+ 
+ TEA_ADD_SOURCES([tifftcl.c tifftclStubInit.c])
+ 
+-TEA_ADD_SOURCES([
+-	../compat/libtiff/libtiff/tif_aux.c		../compat/libtiff/libtiff/tif_close.c		../compat/libtiff/libtiff/tif_codec.c
+-	../compat/libtiff/libtiff/tif_compress.c	../compat/libtiff/libtiff/tif_dir.c		../compat/libtiff/libtiff/tif_dirinfo.c
+-	../compat/libtiff/libtiff/tif_dirread.c	../compat/libtiff/libtiff/tif_dirwrite.c	../compat/libtiff/libtiff/tif_dumpmode.c
+-	../compat/libtiff/libtiff/tif_error.c		../compat/libtiff/libtiff/tif_fax3.c
+-	../compat/libtiff/libtiff/tif_getimage.c	../compat/libtiff/libtiff/tif_flush.c		../compat/libtiff/libtiff/tif_luv.c
+-	../compat/libtiff/libtiff/tif_lzw.c		../compat/libtiff/libtiff/tif_next.c		../compat/libtiff/libtiff/tif_open.c
+-	../compat/libtiff/libtiff/tif_packbits.c	../compat/libtiff/libtiff/tif_predict.c	../compat/libtiff/libtiff/tif_print.c
+-	../compat/libtiff/libtiff/tif_read.c		../compat/libtiff/libtiff/tif_swab.c		../compat/libtiff/libtiff/tif_strip.c
+-	../compat/libtiff/libtiff/tif_thunder.c	../compat/libtiff/libtiff/tif_tile.c		../compat/libtiff/libtiff/tif_version.c
+-	../compat/libtiff/libtiff/tif_warning.c	../compat/libtiff/libtiff/tif_write.c
+-	../compat/libtiff/libtiff/tif_color.c		../compat/libtiff/libtiff/tif_extension.c
+-])
+-
+ TEA_ADD_HEADERS([tifftcl.h tifftclDecls.h])
+ TEA_ADD_INCLUDES([-I\"`\${CYGPATH} \${srcdir}`\"])
+ TEA_ADD_INCLUDES([-I\"./libtiff\"])
+diff --git a/tiff/configure b/tiff/configure
+index bc6189b..b9d50e3 100755
+--- a/tiff/configure
++++ b/tiff/configure
+@@ -6270,7 +6270,7 @@ fi
+ #-----------------------------------------------------------------------
+ 
+ 
+-    vars="tiff.c tiffJpeg.c tiffZip.c tiffPixar.c"
++    vars="tiff.c"
+     for i in $vars; do
+ 	case $i in
+ 	    \$*)
+diff --git a/tiff/configure.ac b/tiff/configure.ac
+index 581908a..5ac8551 100755
+--- a/tiff/configure.ac
++++ b/tiff/configure.ac
+@@ -75,7 +75,7 @@ IMG_SRCPATH(zlibtcl)
+ # and PKG_TCL_SOURCES.
+ #-----------------------------------------------------------------------
+ 
+-TEA_ADD_SOURCES([tiff.c tiffJpeg.c tiffZip.c tiffPixar.c])
++TEA_ADD_SOURCES([tiff.c])
+ TEA_ADD_HEADERS([])
+ TEA_ADD_INCLUDES([-I\"`\${CYGPATH} \${srcdir}`\"])
+ TEA_ADD_INCLUDES([-I\"`\${CYGPATH} \${tkimg_SRC_PATH}`\"])
+diff --git a/tiff/tiff.c b/tiff/tiff.c
+index 69ab989..4a43bc9 100755
+--- a/tiff/tiff.c
++++ b/tiff/tiff.c
+@@ -114,14 +114,10 @@ SetupTiffLibrary (Tcl_Interp *interp)
+         if (Zlibtcl_InitStubs(interp, ZLIBTCL_VERSION, 0) == NULL) {
+             return TCL_ERROR;
+         }
+-        TIFFRegisterCODEC (COMPRESSION_DEFLATE,  "Deflate",  TkimgTIFFInitZip);
+-        TIFFRegisterCODEC (COMPRESSION_ADOBE_DEFLATE, "AdobeDeflate", TkimgTIFFInitZip);
+ 
+         if (Jpegtcl_InitStubs(interp, JPEGTCL_VERSION, 0) == NULL) {
+             return TCL_ERROR;
+         }
+-        TIFFRegisterCODEC (COMPRESSION_JPEG,     "JPEG",     TkimgTIFFInitJpeg);
+-        TIFFRegisterCODEC (COMPRESSION_PIXARLOG, "PixarLog", TkimgTIFFInitPixar);
+     }
+     return TCL_OK;
+ }
+diff --git a/zlib/Makefile.in b/zlib/Makefile.in
+index e854470..5e16649 100755
+--- a/zlib/Makefile.in
++++ b/zlib/Makefile.in
+@@ -149,9 +149,9 @@ DEFS		= @DEFS@ $(PKG_CFLAGS)
+ CONFIG_CLEAN_FILES = Makefile
+ 
+ CPPFLAGS	= @CPPFLAGS@
+-LIBS		= @PKG_LIBS@ @LIBS@
++LIBS		= @PKG_LIBS@ @LIBS@ -lz
+ AR		= @AR@
+-CFLAGS		= @CFLAGS@ -DZEXTERN=MODULE_SCOPE -DZLIB_CONST
++CFLAGS		= @CFLAGS@ -DZEXTERN=MODULE_SCOPE -DZLIB_CONST -DMODULE_SCOPE=extern
+ COMPILE		= $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+ 
+ #========================================================================
+diff --git a/zlib/configure b/zlib/configure
+index c582ba1..e8bff1c 100755
+--- a/zlib/configure
++++ b/zlib/configure
+@@ -5154,184 +5154,6 @@ $as_echo "#define AC_APPLE_UNIVERSAL_BUILD 1" >>confdefs.h
+     done
+ 
+ 
+-
+-
+-    vars="../compat/zlib/adler32.c	../compat/zlib/compress.c	../compat/zlib/crc32.c"
+-    for i in $vars; do
+-	case $i in
+-	    \$*)
+-		# allow $-var names
+-		PKG_SOURCES="$PKG_SOURCES $i"
+-		PKG_OBJECTS="$PKG_OBJECTS $i"
+-		;;
+-	    *)
+-		# check for existence - allows for generic/win/unix VPATH
+-		# To add more dirs here (like 'src'), you have to update VPATH
+-		# in Makefile.in as well
+-		if test ! -f "${srcdir}/$i" -a ! -f "${srcdir}/generic/$i" \
+-		    -a ! -f "${srcdir}/win/$i" -a ! -f "${srcdir}/unix/$i" \
+-		    -a ! -f "${srcdir}/macosx/$i" \
+-		    ; then
+-		    as_fn_error $? "could not find source file '$i'" "$LINENO" 5
+-		fi
+-		PKG_SOURCES="$PKG_SOURCES $i"
+-		# this assumes it is in a VPATH dir
+-		i=`basename $i`
+-		# handle user calling this before or after TEA_SETUP_COMPILER
+-		if test x"${OBJEXT}" != x ; then
+-		    j="`echo $i | sed -e 's/\.[^.]*$//'`.${OBJEXT}"
+-		else
+-		    j="`echo $i | sed -e 's/\.[^.]*$//'`.\${OBJEXT}"
+-		fi
+-		PKG_OBJECTS="$PKG_OBJECTS $j"
+-		;;
+-	esac
+-    done
+-
+-
+-
+-
+-    vars="../compat/zlib/deflate.c	../compat/zlib/gzclose.c	../compat/zlib/gzlib.c"
+-    for i in $vars; do
+-	case $i in
+-	    \$*)
+-		# allow $-var names
+-		PKG_SOURCES="$PKG_SOURCES $i"
+-		PKG_OBJECTS="$PKG_OBJECTS $i"
+-		;;
+-	    *)
+-		# check for existence - allows for generic/win/unix VPATH
+-		# To add more dirs here (like 'src'), you have to update VPATH
+-		# in Makefile.in as well
+-		if test ! -f "${srcdir}/$i" -a ! -f "${srcdir}/generic/$i" \
+-		    -a ! -f "${srcdir}/win/$i" -a ! -f "${srcdir}/unix/$i" \
+-		    -a ! -f "${srcdir}/macosx/$i" \
+-		    ; then
+-		    as_fn_error $? "could not find source file '$i'" "$LINENO" 5
+-		fi
+-		PKG_SOURCES="$PKG_SOURCES $i"
+-		# this assumes it is in a VPATH dir
+-		i=`basename $i`
+-		# handle user calling this before or after TEA_SETUP_COMPILER
+-		if test x"${OBJEXT}" != x ; then
+-		    j="`echo $i | sed -e 's/\.[^.]*$//'`.${OBJEXT}"
+-		else
+-		    j="`echo $i | sed -e 's/\.[^.]*$//'`.\${OBJEXT}"
+-		fi
+-		PKG_OBJECTS="$PKG_OBJECTS $j"
+-		;;
+-	esac
+-    done
+-
+-
+-
+-
+-    vars="../compat/zlib/gzread.c	../compat/zlib/gzwrite.c	../compat/zlib/infback.c"
+-    for i in $vars; do
+-	case $i in
+-	    \$*)
+-		# allow $-var names
+-		PKG_SOURCES="$PKG_SOURCES $i"
+-		PKG_OBJECTS="$PKG_OBJECTS $i"
+-		;;
+-	    *)
+-		# check for existence - allows for generic/win/unix VPATH
+-		# To add more dirs here (like 'src'), you have to update VPATH
+-		# in Makefile.in as well
+-		if test ! -f "${srcdir}/$i" -a ! -f "${srcdir}/generic/$i" \
+-		    -a ! -f "${srcdir}/win/$i" -a ! -f "${srcdir}/unix/$i" \
+-		    -a ! -f "${srcdir}/macosx/$i" \
+-		    ; then
+-		    as_fn_error $? "could not find source file '$i'" "$LINENO" 5
+-		fi
+-		PKG_SOURCES="$PKG_SOURCES $i"
+-		# this assumes it is in a VPATH dir
+-		i=`basename $i`
+-		# handle user calling this before or after TEA_SETUP_COMPILER
+-		if test x"${OBJEXT}" != x ; then
+-		    j="`echo $i | sed -e 's/\.[^.]*$//'`.${OBJEXT}"
+-		else
+-		    j="`echo $i | sed -e 's/\.[^.]*$//'`.\${OBJEXT}"
+-		fi
+-		PKG_OBJECTS="$PKG_OBJECTS $j"
+-		;;
+-	esac
+-    done
+-
+-
+-
+-
+-    vars="../compat/zlib/inffast.c	../compat/zlib/inflate.c	../compat/zlib/inftrees.c"
+-    for i in $vars; do
+-	case $i in
+-	    \$*)
+-		# allow $-var names
+-		PKG_SOURCES="$PKG_SOURCES $i"
+-		PKG_OBJECTS="$PKG_OBJECTS $i"
+-		;;
+-	    *)
+-		# check for existence - allows for generic/win/unix VPATH
+-		# To add more dirs here (like 'src'), you have to update VPATH
+-		# in Makefile.in as well
+-		if test ! -f "${srcdir}/$i" -a ! -f "${srcdir}/generic/$i" \
+-		    -a ! -f "${srcdir}/win/$i" -a ! -f "${srcdir}/unix/$i" \
+-		    -a ! -f "${srcdir}/macosx/$i" \
+-		    ; then
+-		    as_fn_error $? "could not find source file '$i'" "$LINENO" 5
+-		fi
+-		PKG_SOURCES="$PKG_SOURCES $i"
+-		# this assumes it is in a VPATH dir
+-		i=`basename $i`
+-		# handle user calling this before or after TEA_SETUP_COMPILER
+-		if test x"${OBJEXT}" != x ; then
+-		    j="`echo $i | sed -e 's/\.[^.]*$//'`.${OBJEXT}"
+-		else
+-		    j="`echo $i | sed -e 's/\.[^.]*$//'`.\${OBJEXT}"
+-		fi
+-		PKG_OBJECTS="$PKG_OBJECTS $j"
+-		;;
+-	esac
+-    done
+-
+-
+-
+-
+-    vars="../compat/zlib/trees.c	../compat/zlib/uncompr.c	../compat/zlib/zutil.c"
+-    for i in $vars; do
+-	case $i in
+-	    \$*)
+-		# allow $-var names
+-		PKG_SOURCES="$PKG_SOURCES $i"
+-		PKG_OBJECTS="$PKG_OBJECTS $i"
+-		;;
+-	    *)
+-		# check for existence - allows for generic/win/unix VPATH
+-		# To add more dirs here (like 'src'), you have to update VPATH
+-		# in Makefile.in as well
+-		if test ! -f "${srcdir}/$i" -a ! -f "${srcdir}/generic/$i" \
+-		    -a ! -f "${srcdir}/win/$i" -a ! -f "${srcdir}/unix/$i" \
+-		    -a ! -f "${srcdir}/macosx/$i" \
+-		    ; then
+-		    as_fn_error $? "could not find source file '$i'" "$LINENO" 5
+-		fi
+-		PKG_SOURCES="$PKG_SOURCES $i"
+-		# this assumes it is in a VPATH dir
+-		i=`basename $i`
+-		# handle user calling this before or after TEA_SETUP_COMPILER
+-		if test x"${OBJEXT}" != x ; then
+-		    j="`echo $i | sed -e 's/\.[^.]*$//'`.${OBJEXT}"
+-		else
+-		    j="`echo $i | sed -e 's/\.[^.]*$//'`.\${OBJEXT}"
+-		fi
+-		PKG_OBJECTS="$PKG_OBJECTS $j"
+-		;;
+-	esac
+-    done
+-
+-
+-
+-
+-
+     vars="zlibtcl.h zlibtclDecls.h"
+     for i in $vars; do
+ 	# check for existence, be strict because it is installed
+diff --git a/zlib/configure.ac b/zlib/configure.ac
+index bbc639c..c8c3868 100755
+--- a/zlib/configure.ac
++++ b/zlib/configure.ac
+@@ -50,11 +50,6 @@ TEA_SETUP_COMPILER
+ #-----------------------------------------------------------------------
+ 
+ TEA_ADD_SOURCES([zlibtcl.c zlibtclStubInit.c])
+-TEA_ADD_SOURCES([../compat/zlib/adler32.c	../compat/zlib/compress.c	../compat/zlib/crc32.c])
+-TEA_ADD_SOURCES([../compat/zlib/deflate.c	../compat/zlib/gzclose.c	../compat/zlib/gzlib.c])
+-TEA_ADD_SOURCES([../compat/zlib/gzread.c	../compat/zlib/gzwrite.c	../compat/zlib/infback.c])
+-TEA_ADD_SOURCES([../compat/zlib/inffast.c	../compat/zlib/inflate.c	../compat/zlib/inftrees.c])
+-TEA_ADD_SOURCES([../compat/zlib/trees.c	../compat/zlib/uncompr.c	../compat/zlib/zutil.c])
+ 
+ TEA_ADD_HEADERS([zlibtcl.h zlibtclDecls.h])
+ 
+diff --git a/zlib/zlibtclDecls.h b/zlib/zlibtclDecls.h
+index c2ebb63..0e75133 100755
+--- a/zlib/zlibtclDecls.h
++++ b/zlib/zlibtclDecls.h
+@@ -28,7 +28,7 @@
+ EXTERN int Zlibtcl_Init(Tcl_Interp *interp);
+ EXTERN int Zlibtcl_SafeInit(Tcl_Interp *interp);
+ 
+-#include "../compat/zlib/zlib.h"
++#include "/usr/include/zlib.h"
+ 
+ #undef gzgetc /* Became a macro in zlib 1.2.7 */
+ 

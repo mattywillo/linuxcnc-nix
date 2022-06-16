@@ -1,0 +1,19 @@
+diff --git a/src/rtapi/uspace_common.h b/src/rtapi/uspace_common.h
+index 8dde420142..f9ff6f0cb2 100644
+--- a/src/rtapi/uspace_common.h
++++ b/src/rtapi/uspace_common.h
+@@ -381,9 +381,11 @@ static int detect_env_override() {
+ 
+ static int detect_realtime() {
+     struct stat st;
+-    if ((stat(EMC2_BIN_DIR "/rtapi_app", &st) < 0)
+-            || st.st_uid != 0 || !(st.st_mode & S_ISUID))
+-        return 0;
++    //setuid programs are forbidden from the nix store, a wrapper outside of the store is created instead
++    //this check fails under those circumstances, disable it and hope for the best
++    /* if ((stat(EMC2_BIN_DIR "/rtapi_app", &st) < 0) */
++    /*         || st.st_uid != 0 || !(st.st_mode & S_ISUID)) */
++    /*     return 0; */
+     return detect_env_override() || detect_preempt_rt() || detect_rtai() || detect_xenomai();
+ }
+ 
